@@ -1,4 +1,6 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
 	theme?: 'light' | 'dark';
 }
@@ -30,11 +32,8 @@ const { theme = 'light' } = Astro.props;
 			</div>
 			<div class="nav-col">
 				<ul class="breadcrumb main-nav no-space">
-					<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-					<li><a href="#"><i class="fa fa-google"></i></a></li>
-					<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-					<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-					<li><a href="#"><i class="fa fa-github"></i></a></li>
+					<li><a href={profile.social.linkedin} target="_blank" rel="noopener noreferrer"><i class="fa fa-linkedin"></i></a></li>
+					<li><a href={profile.social.github} target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i></a></li>
 				</ul>
 			</div>
 		</div>
@@ -315,6 +314,10 @@ const { theme = 'light' } = Astro.props;
 				e.preventDefault();
 				const top = target.getBoundingClientRect().top + window.scrollY - (nav.offsetHeight - 1);
 				window.scrollTo({ top, behavior: 'smooth' });
+
+				if (link.id === 'hireme-tab') {
+					document.querySelector<HTMLElement>('[data-tab="tab-hire"]')?.click();
+				}
 
 				if (collapse?.classList.contains('in')) {
 					collapse.classList.remove('in');

@@ -1,69 +1,13 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
 	theme?: 'light' | 'dark';
 }
 
 const { theme = 'light' } = Astro.props;
 
-const employment = [
-	{
-		title: 'Software Engineer',
-		company: 'Company Name',
-		dates: '2023 - Present',
-		description:
-			'Building and maintaining full-stack features, collaborating with design and product to ship reliable, well-tested code.',
-	},
-	{
-		title: 'Backend Developer',
-		company: 'Company Name',
-		dates: '2021 - 2023',
-		description:
-			'Designed APIs and data models, improved performance across core services, and mentored newer teammates.',
-	},
-	{
-		title: 'Junior Developer',
-		company: 'Company Name',
-		dates: '2019 - 2021',
-		description:
-			'Started out fixing bugs and shipping small features, and grew into owning entire modules end to end.',
-	},
-];
-
-const education = [
-	{
-		title: 'B.Sc. Computer Science',
-		company: 'University Name',
-		dates: '2015 - 2019',
-		description:
-			'Focused on software engineering, algorithms, and databases, with hands-on project work throughout.',
-	},
-	{
-		title: 'Web Development Bootcamp',
-		company: 'Bootcamp Name',
-		dates: '2019',
-		description:
-			'Intensive program covering modern front-end and back-end development practices.',
-	},
-];
-
-const skills = [
-	{ label: 'JavaScript', percent: 90 },
-	{ label: 'TypeScript', percent: 85 },
-	{ label: 'Node.js', percent: 80 },
-	{ label: 'SQL', percent: 75 },
-];
-
-const moreSkillsLeft = [
-	{ label: 'Problem Solving', percent: 90 },
-	{ label: 'Teamwork', percent: 85 },
-	{ label: 'Communication', percent: 75 },
-];
-
-const moreSkillsRight = [
-	{ label: 'English', percent: 95 },
-	{ label: 'Spanish', percent: 100 },
-	{ label: 'French', percent: 40 },
-];
+const { employment, education, certifications, skills, moreSkillsLeft, moreSkillsRight } = profile;
 ---
 
 <section id="resume" class={`resume-section ${theme}`}>
@@ -86,7 +30,9 @@ const moreSkillsRight = [
 						<div class="desc">
 							<h5>{job.title}</h5>
 							<p class="meta">{job.company}</p>
-							<p>{job.description}</p>
+							<ul class="bullet-list">
+								{job.description.map((line) => <li>{line}</li>)}
+							</ul>
 							<p class="meta">{job.dates}</p>
 						</div>
 					</li>
@@ -114,9 +60,30 @@ const moreSkillsRight = [
 						<div class="desc">
 							<h5>{edu.title}</h5>
 							<p class="meta">{edu.company}</p>
-							<p>{edu.description}</p>
 							<p class="meta">{edu.dates}</p>
 						</div>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+
+	<div class="shape-bottom">
+		<div class="block-title">
+			<div class="container-medium">
+				<h2>Certifications &amp; Training</h2>
+				<div class="title-icon"><i class="fa fa-certificate"></i></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-medium">
+		<ul class="list-certifications">
+			{
+				certifications.map((cert) => (
+					<li>
+						<span class="cert-label"><i class="fa fa-check-circle" /> {cert.label}</span>
+						<span class="cert-meta">{cert.meta}</span>
 					</li>
 				))
 			}
@@ -183,8 +150,8 @@ const moreSkillsRight = [
 	</div>
 
 	<div class="cv-actions">
-		<a href="#" class="btn-outline"><i class="fa fa-download"></i> Download CV</a>
-		<a href="#" class="btn-outline print-btn"><i class="fa fa-print"></i> Print CV</a>
+		<a href={profile.resumePdf} download class="btn-outline"><i class="fa fa-download"></i> Download CV</a>
+		<a href={profile.resumePdf} class="btn-outline print-btn" data-pdf={profile.resumePdf}><i class="fa fa-print"></i> Print CV</a>
 	</div>
 </section>
 
@@ -224,7 +191,8 @@ const moreSkillsRight = [
 		left: 50%;
 		margin-left: -10px;
 		transform: rotate(45deg);
-		border: 1px solid #ebebeb;
+		border-right: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
 	}
 
 	.resume-section.light .shape-bottom:before {
@@ -256,7 +224,6 @@ const moreSkillsRight = [
 	}
 
 	.block-title h2 {
-		display: inline-block;
 		margin: 0;
 		text-transform: uppercase;
 	}
@@ -270,7 +237,8 @@ const moreSkillsRight = [
 	}
 
 	.title-icon {
-		display: block;
+		display: inline-block;
+		position: relative;
 		margin-top: 10px;
 		font-size: 18px;
 		color: #7d7d7d;
@@ -278,6 +246,29 @@ const moreSkillsRight = [
 
 	.resume-section.dark .title-icon {
 		color: #919191;
+	}
+
+	.title-icon:before,
+	.title-icon:after {
+		content: '';
+		position: absolute;
+		height: 1px;
+		width: 20px;
+		top: 50%;
+		background: #323232;
+	}
+
+	.title-icon:before {
+		left: -30px;
+	}
+
+	.title-icon:after {
+		right: -30px;
+	}
+
+	.resume-section.dark .title-icon:before,
+	.resume-section.dark .title-icon:after {
+		background: #cdcdcd;
 	}
 
 	/* == timeline (employment / education) == */
@@ -302,7 +293,7 @@ const moreSkillsRight = [
 		background: #1e1e1e;
 	}
 
-	.list-timeline li {
+	.list-timeline > li {
 		width: 50%;
 		box-sizing: border-box;
 		position: relative;
@@ -311,14 +302,14 @@ const moreSkillsRight = [
 		margin-bottom: 10px;
 	}
 
-	.list-timeline li:nth-child(odd) {
+	.list-timeline > li:nth-child(odd) {
 		margin-left: 50%;
 		text-align: left;
 		padding-right: 0;
 		padding-left: 50px;
 	}
 
-	.list-timeline li .ic {
+	.list-timeline > li .ic {
 		position: absolute;
 		top: 20px;
 		width: 40px;
@@ -330,17 +321,17 @@ const moreSkillsRight = [
 		right: 10px;
 	}
 
-	.resume-section.dark .list-timeline li .ic {
-		background: #ffffff;
-		color: #1e1e1e;
+	.resume-section.dark .list-timeline > li .ic {
+		background: #1e1e1e;
+		color: #ffffff;
 	}
 
-	.list-timeline li:nth-child(odd) .ic {
+	.list-timeline > li:nth-child(odd) .ic {
 		right: auto;
 		left: 10px;
 	}
 
-	.list-timeline li .number {
+	.list-timeline > li .number {
 		position: absolute;
 		top: 10px;
 		right: -110px;
@@ -350,23 +341,23 @@ const moreSkillsRight = [
 		color: #ebebeb;
 	}
 
-	.resume-section.dark .list-timeline li .number {
+	.resume-section.dark .list-timeline > li .number {
 		color: #1e1e1e;
 	}
 
-	.list-timeline li:nth-child(odd) .number {
+	.list-timeline > li:nth-child(odd) .number {
 		right: auto;
 		left: -110px;
 	}
 
-	.list-timeline li .desc {
+	.list-timeline > li .desc {
 		padding: 20px;
 		border-top: 1px solid #ebebeb;
 		border-bottom: 1px solid #ebebeb;
 		position: relative;
 	}
 
-	.resume-section.dark .list-timeline li .desc {
+	.resume-section.dark .list-timeline > li .desc {
 		border-color: #1e1e1e;
 	}
 
@@ -396,25 +387,97 @@ const moreSkillsRight = [
 		color: #ffffff;
 	}
 
+	.bullet-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	/* == certifications == */
+	.list-certifications {
+		list-style: none;
+		margin: 0;
+		padding: 30px 0;
+	}
+
+	.list-certifications li {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 10px 20px;
+		padding: 16px 0;
+		border-bottom: 1px solid #ebebeb;
+	}
+
+	.resume-section.dark .list-certifications li {
+		border-bottom-color: #1e1e1e;
+	}
+
+	.list-certifications li:last-child {
+		border-bottom: 0;
+	}
+
+	.cert-label {
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.cert-label i {
+		margin-right: 8px;
+	}
+
+	.resume-section.light .cert-label {
+		color: #000000;
+	}
+
+	.resume-section.dark .cert-label {
+		color: #ffffff;
+	}
+
+	.resume-section.light .cert-label i {
+		color: #7d7d7d;
+	}
+
+	.resume-section.dark .cert-label i {
+		color: #919191;
+	}
+
+	.cert-meta {
+		font-family: Georgia, serif;
+		white-space: nowrap;
+	}
+
+	.resume-section.light .cert-meta {
+		color: #000000;
+	}
+
+	.resume-section.dark .cert-meta {
+		color: #ffffff;
+	}
+
 	@media (max-width: 768px) {
 		.list-timeline:before {
 			left: 20px;
 		}
-		.list-timeline li,
-		.list-timeline li:nth-child(odd) {
+		.list-timeline > li,
+		.list-timeline > li:nth-child(odd) {
 			width: 100%;
 			margin-left: 0;
 			text-align: left;
 			padding-left: 50px;
 			padding-right: 0;
 		}
-		.list-timeline li .ic,
-		.list-timeline li:nth-child(odd) .ic {
+		.list-timeline > li .ic,
+		.list-timeline > li:nth-child(odd) .ic {
 			left: 0;
 			right: auto;
 		}
-		.list-timeline li .number,
-		.list-timeline li:nth-child(odd) .number {
+		.list-timeline > li .number,
+		.list-timeline > li:nth-child(odd) .number {
 			display: none;
 		}
 	}
@@ -587,11 +650,43 @@ const moreSkillsRight = [
 
 	/* == cv actions == */
 	.cv-actions {
+		position: relative;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 		gap: 15px;
 		flex-wrap: wrap;
-		padding: 40px 15px 60px;
+		padding: 60px 15px;
+		background-image: url('/images/guitar.jpg');
+		background-size: cover;
+		background-position: center 45%;
+	}
+
+	.cv-actions:before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+	}
+
+	.cv-actions .btn-outline {
+		position: relative;
+		z-index: 1;
+	}
+
+	.cv-actions .btn-outline,
+	.resume-section.light .cv-actions .btn-outline,
+	.resume-section.dark .cv-actions .btn-outline {
+		color: #ffffff;
+		border-color: rgba(255, 255, 255, 0.7);
+	}
+
+	.cv-actions .btn-outline:hover,
+	.resume-section.light .cv-actions .btn-outline:hover,
+	.resume-section.dark .cv-actions .btn-outline:hover {
+		background: #ffffff;
+		border-color: #ffffff;
+		color: #000000;
 	}
 
 	.btn-outline {
@@ -636,7 +731,24 @@ const moreSkillsRight = [
 	document.querySelectorAll<HTMLAnchorElement>('.print-btn').forEach((btn) => {
 		btn.addEventListener('click', (e) => {
 			e.preventDefault();
-			window.print();
+			const pdfUrl = btn.dataset.pdf;
+			if (!pdfUrl) {
+				window.print();
+				return;
+			}
+
+			// Printing via a hidden iframe treats the PDF as embedded content,
+			// so browsers print it at a fixed 100% scale and clip whatever
+			// doesn't fit the page. Opening it as its own document instead
+			// lets the browser's native PDF print pipeline apply its
+			// "fit to printable area" default, which is the only way to get
+			// a full-page print without the user manually changing the scale
+			// (browsers don't expose an API to preset print scale/paper size).
+			const pdfWindow = window.open(pdfUrl, '_blank');
+
+			pdfWindow?.addEventListener('load', () => {
+				setTimeout(() => pdfWindow.print(), 500);
+			});
 		});
 	});
 </script>

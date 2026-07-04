@@ -1,12 +1,16 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
 	theme?: 'light' | 'dark';
 }
 
 const { theme = 'light' } = Astro.props;
 
-const MAP_LAT = 1.2136;
-const MAP_LON = -77.2811;
+const MAP_LAT = profile.location.lat;
+const MAP_LON = profile.location.lon;
+const MAP_LABEL = profile.location.label;
+const MAP_ZOOM = profile.location.zoom;
 ---
 
 <section id="contact" class={`contact-section ${theme}`}>
@@ -28,7 +32,14 @@ const MAP_LON = -77.2811;
 				</ul>
 
 				<div class="tab-content">
-					<form id="tab-contact" class="tab-pane active" data-form="contact">
+					<form
+						id="tab-contact"
+						class="tab-pane active"
+						data-form="contact"
+						action="https://formspree.io/f/xeebvyel"
+						method="POST"
+					>
+						<input type="hidden" name="_subject" value="New message from portfolio contact form" />
 						<div class="form-group">
 							<label for="fullname">Your Name (*)</label>
 							<input type="text" id="fullname" class="form-flat" name="fullname" required />
@@ -47,7 +58,14 @@ const MAP_LON = -77.2811;
 						<p class="form-status" hidden></p>
 					</form>
 
-					<form id="tab-hire" class="tab-pane" data-form="hire">
+					<form
+						id="tab-hire"
+						class="tab-pane"
+						data-form="hire"
+						action="https://formspree.io/f/xeebvyel"
+						method="POST"
+					>
+						<input type="hidden" name="_subject" value="New hire request from portfolio" />
 						<div class="form-group">
 							<label for="hire-fullname">Your Name (*)</label>
 							<input type="text" id="hire-fullname" class="form-flat" name="fullname" required />
@@ -73,7 +91,7 @@ const MAP_LON = -77.2811;
 			<button type="button" class="map-overlay" aria-label="Click to interact with the map">
 				<span><i class="fa fa-map-marker"></i> Click to interact with the map</span>
 			</button>
-			<div id="leaflet-map" data-lat={MAP_LAT} data-lon={MAP_LON}></div>
+			<div id="leaflet-map" data-lat={MAP_LAT} data-lon={MAP_LON} data-label={MAP_LABEL} data-zoom={MAP_ZOOM}></div>
 		</div>
 	</div>
 </section>
@@ -113,7 +131,8 @@ const MAP_LON = -77.2811;
 		left: 50%;
 		margin-left: -10px;
 		transform: rotate(45deg);
-		border: 1px solid #ebebeb;
+		border-right: 1px solid #ebebeb;
+		border-bottom: 1px solid #ebebeb;
 	}
 
 	.contact-section.light .shape-bottom:before {
@@ -145,7 +164,6 @@ const MAP_LON = -77.2811;
 	}
 
 	.block-title h2 {
-		display: inline-block;
 		margin: 0;
 		text-transform: uppercase;
 	}
@@ -159,7 +177,8 @@ const MAP_LON = -77.2811;
 	}
 
 	.title-icon {
-		display: block;
+		display: inline-block;
+		position: relative;
 		margin-top: 10px;
 		font-size: 18px;
 		color: #7d7d7d;
@@ -167,6 +186,29 @@ const MAP_LON = -77.2811;
 
 	.contact-section.dark .title-icon {
 		color: #919191;
+	}
+
+	.title-icon:before,
+	.title-icon:after {
+		content: '';
+		position: absolute;
+		height: 1px;
+		width: 20px;
+		top: 50%;
+		background: #323232;
+	}
+
+	.title-icon:before {
+		left: -30px;
+	}
+
+	.title-icon:after {
+		right: -30px;
+	}
+
+	.contact-section.dark .title-icon:before,
+	.contact-section.dark .title-icon:after {
+		background: #cdcdcd;
 	}
 
 	/* == layout == */
@@ -398,12 +440,36 @@ const MAP_LON = -77.2811;
 
 	function initContactForms() {
 		document.querySelectorAll<HTMLFormElement>('form[data-form]').forEach((form) => {
-			form.addEventListener('submit', (e) => {
+			form.addEventListener('submit', async (e) => {
 				e.preventDefault();
+
 				const status = form.querySelector<HTMLElement>('.form-status');
-				if (status) {
-					status.hidden = false;
-					status.textContent = "Thanks! This form isn't wired to a backend yet, but your message would be sent from here.";
+				const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+				if (!status || !submitBtn) return;
+
+				submitBtn.disabled = true;
+				status.hidden = false;
+				status.textContent = 'Sending…';
+
+				try {
+					const response = await fetch(form.action, {
+						method: 'POST',
+						body: new FormData(form),
+						headers: { Accept: 'application/json' },
+					});
+
+					if (response.ok) {
+						status.textContent = "Thanks! Your message has been sent.";
+						form.reset();
+					} else {
+						const data = await response.json().catch(() => null);
+						const message = data?.errors?.map((err: { message: string }) => err.message).join(', ');
+						status.textContent = message || 'Something went wrong. Please try again.';
+					}
+				} catch {
+					status.textContent = 'Something went wrong. Please try again.';
+				} finally {
+					submitBtn.disabled = false;
 				}
 			});
 		});
@@ -437,16 +503,18 @@ const MAP_LON = -77.2811;
 
 		const lat = Number(mapEl.dataset.lat);
 		const lon = Number(mapEl.dataset.lon);
+		const label = mapEl.dataset.label ?? '';
+		const zoom = Number(mapEl.dataset.zoom) || 13;
 
 		await loadLeaflet();
 		const L = (window as any).L;
 
-		const map = L.map(mapEl, { scrollWheelZoom: false }).setView([lat, lon], 13);
+		const map = L.map(mapEl, { scrollWheelZoom: false }).setView([lat, lon], zoom);
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			maxZoom: 19,
 		}).addTo(map);
-		L.marker([lat, lon]).addTo(map).bindPopup('Pasto, Nariño, Colombia');
+		L.marker([lat, lon]).addTo(map).bindPopup(label);
 
 		overlay?.addEventListener('click', () => {
 			overlay.classList.add('hidden');

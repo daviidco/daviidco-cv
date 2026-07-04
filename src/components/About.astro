@@ -1,4 +1,6 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
   theme?: "light" | "dark";
 }
@@ -11,8 +13,8 @@ const { theme = "light" } = Astro.props;
     <div class="my-pict">
       <div class="overfly">
         <div class="text-bottom">
-          <h2>Paulo Cordoba</h2>
-          <h5>Software Engineer</h5>
+          <h2>{profile.name}</h2>
+          <h5>{profile.profession}</h5>
         </div>
       </div>
     </div>
@@ -20,22 +22,7 @@ const { theme = "light" } = Astro.props;
       <div class="panel-light">
         <div class="inner-text">
           <h3>Hello There!</h3>
-          <p>
-            I discovered my passion for design when I was a sophomore in High
-            School; It was then when it became clear what I wanted to do for a
-            living. I pursued my career at the amazing Valencia College where I
-            started my major in Print Design. A year later I took a begginer’s
-            Web class, where I discovered the love for code. After that, I
-            switched my major to Interactive Design and started the never-ending
-            journey of becoming a web developer along with sharpening my eye for
-            design.
-          </p>
-          <p>
-            In 2013 eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, Ut enim ad minim veniam, quis nostrud
-            exercitation quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+          {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
         </div>
       </div>
       <div class="panel-dark">
@@ -43,23 +30,23 @@ const { theme = "light" } = Astro.props;
           <p class="contact-list">
             <span
               ><i class="fa fa-calendar"></i>
-              <strong>Birthdate</strong> : dd/mm/yyyy</span
+              <strong>Birthdate</strong> : {profile.contact.birthdate}</span
             >
             <span
               ><i class="fa fa-phone"></i>
-              <strong>Phone</strong> : +00 000 000 000</span
+              <strong>Phone</strong> : {profile.contact.phone}</span
             >
             <span
               ><i class="fa fa-envelope"></i>
-              <strong>Email</strong> : you@example.com</span
+              <strong>Email</strong> : {profile.contact.email}</span
             >
             <span
               ><i class="fa fa-globe"></i>
-              <strong>Website</strong> : www.example.com</span
+              <strong>Website</strong> : {profile.contact.website}</span
             >
             <span
               ><i class="fa fa-location-arrow"></i>
-              <strong>Address</strong> : City, Country</span
+              <strong>Address</strong> : {profile.contact.address}</span
             >
           </p>
         </div>
@@ -69,23 +56,17 @@ const { theme = "light" } = Astro.props;
 
   <div class="container">
     <ul class="services">
-      <li>
-        <div class="ic"><i class="fa fa-code"></i></div>
-        <h5>Full-Stack Developer</h5>
-      </li>
-      <li>
-        <div class="ic"><i class="fa fa-lightbulb-o"></i></div>
-        <h5>Problem Solver</h5>
-      </li>
-      <li>
-        <div class="ic"><i class="fa fa-graduation-cap"></i></div>
-        <h5>Continuous Learner</h5>
-      </li>
+      {profile.mainSkills.map((skill) => (
+        <li>
+          <div class="ic"><i class={`fa ${skill.icon}`} /></div>
+          <h5>{skill.label}</h5>
+        </li>
+      ))}
     </ul>
   </div>
 </section>
 
-<style>
+<style define:vars={{ heroImage: `url(${profile.heroImage})` }}>
   .about-section {
     position: relative;
     z-index: 1;
@@ -132,7 +113,7 @@ const { theme = "light" } = Astro.props;
     width: 50%;
     min-height: 500px;
     position: relative;
-    background-image: url("/images/hero-mountains.jpg");
+    background-image: var(--heroImage);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;

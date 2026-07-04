@@ -1,4 +1,6 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
 	theme?: 'light' | 'dark';
 }
@@ -12,13 +14,10 @@ const currentYear = new Date().getFullYear();
 	<div class="container-medium">
 		<div class="folow-me">Follow Me On</div>
 		<ul class="social-links">
-			<li><a href="#" title="Facebook"><i class="fa fa-facebook"></i></a></li>
-			<li><a href="#" title="Google"><i class="fa fa-google"></i></a></li>
-			<li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>
-			<li><a href="#" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
-			<li><a href="#" title="Github"><i class="fa fa-github"></i></a></li>
+			<li><a href={profile.social.linkedin} title="Linkedin" target="_blank" rel="noopener noreferrer"><i class="fa fa-linkedin"></i></a></li>
+			<li><a href={profile.social.github} title="Github" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i></a></li>
 		</ul>
-		<p class="copyright">Paulo Cordoba - All Rights Reserved &copy; {currentYear}</p>
+		<p class="copyright">{profile.name} - All Rights Reserved &copy; {currentYear}</p>
 		<a href="#home" class="back-to-top" aria-label="Back to top"><i class="fa fa-angle-double-up"></i></a>
 	</div>
 </footer>

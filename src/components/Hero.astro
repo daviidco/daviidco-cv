@@ -1,11 +1,14 @@
 ---
+import profile from '../data/profile.json';
+
 interface Props {
-	name: string;
-	job: string;
 	theme?: 'light' | 'dark';
 }
 
-const { name, job, theme = 'light' } = Astro.props;
+const { theme = 'light' } = Astro.props;
+
+const heroName = `I'm ${profile.name}`;
+const heroJob = `A ${profile.profession}`;
 ---
 
 <header class={`main-header ${theme}`} id="home">
@@ -14,14 +17,14 @@ const { name, job, theme = 'light' } = Astro.props;
 			<div class="box-line">Who I Am</div>
 		</div>
 		<div class="v-content">
-			<h1 class="name">{name}</h1>
-			<h4 class="job"><span class="typed-text">{job}</span></h4>
+			<h1 class="name">{heroName}</h1>
+			<h4 class="job"><span class="typed-text">{heroJob}</span></h4>
 		</div>
 	</div>
 	<slot name="nav" />
 </header>
 
-<style>
+<style define:vars={{ heroImage: `url(${profile.heroImage})` }}>
 	.main-header {
 		height: 100vh;
 		min-height: 600px;
@@ -31,7 +34,7 @@ const { name, job, theme = 'light' } = Astro.props;
 	.header-content-fixed {
 		height: 100vh;
 		min-height: 600px;
-		background-image: url('/images/hero-mountains.jpg');
+		background-image: var(--heroImage);
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
