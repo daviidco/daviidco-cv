@@ -511,12 +511,9 @@ const MAP_ZOOM = profile.location.zoom;
 
 		// Leaflet's auto-detected icon path breaks when leaflet.js is injected
 		// dynamically (as above), leaving the marker + shadow icons 404ing.
-		// Point them at the CDN explicitly instead.
-		L.Icon.Default.mergeOptions({
-			iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-			iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-			shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-		});
+		// L.Icon.Default always prepends `imagePath` to the (relative) icon
+		// filenames, so just point imagePath at the CDN's images folder.
+		L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
 
 		const map = L.map(mapEl, { scrollWheelZoom: false }).setView([lat, lon], zoom);
 		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
