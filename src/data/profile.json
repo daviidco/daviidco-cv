@@ -1,8 +1,8 @@
 {
 	"name": "Paulo Cordoba",
 	"profession": "Software Engineer",
-	"heroImage": "/images/hero-mountains-balck-white.jpg",
-	"resumePdf": "/docs/DavidCórdobaMoreno-Resume-US2026.pdf",
+	"heroImage": "images/hero-mountains-balck-white.jpg",
+	"resumePdf": "docs/DavidCórdobaMoreno-Resume-US2026.pdf",
 	"bio": [
 		"I discovered my passion for technology at ITSIM High School in Pasto, during an elective computer science class where I saw an Adobe Flash animation for the first time. I was amazed. From that moment, I knew I wanted to dedicate my life to building things with code. I pursued Software Engineering with that same excitement, and later a Specialization in Software Construction, but my hunger for learning remains intact, just like the first day.",
 		"Today, with over 8 years of experience as a backend developer, I've traveled a path from C# and Java to finding my true passion: Python. I deeply enjoy its elegance, its readability, and how it allows me to solve complex problems with clean and expressive code. I build RESTful APIs, automate processes, handle data, and deploy solutions on AWS, always striving for technical excellence. But what truly drives me is discipline, perseverance, and teamwork. A scout at heart, lover of nature, swimming, and the gym, I believe a healthy body supports a creative mind. And when I'm not coding, I'm playing guitar or taking on some challenge that reminds me that with passion and consistency, anything is possible."

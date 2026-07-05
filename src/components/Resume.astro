@@ -150,12 +150,12 @@ const { employment, education, certifications, skills, moreSkillsLeft, moreSkill
 	</div>
 
 	<div class="cv-actions">
-		<a href={profile.resumePdf} download class="btn-outline"><i class="fa fa-download"></i> Download CV</a>
-		<a href={profile.resumePdf} class="btn-outline print-btn" data-pdf={profile.resumePdf}><i class="fa fa-print"></i> Print CV</a>
+		<a href={`${import.meta.env.BASE_URL}${profile.resumePdf}`} download class="btn-outline"><i class="fa fa-download"></i> Download CV</a>
+		<a href={`${import.meta.env.BASE_URL}${profile.resumePdf}`} class="btn-outline print-btn" data-pdf={`${import.meta.env.BASE_URL}${profile.resumePdf}`}><i class="fa fa-print"></i> Print CV</a>
 	</div>
 </section>
 
-<style>
+<style define:vars={{ guitarImage: `url(${import.meta.env.BASE_URL}images/guitar.jpg)` }}>
 	.resume-section {
 		position: relative;
 		z-index: 1;
@@ -657,7 +657,7 @@ const { employment, education, certifications, skills, moreSkillsLeft, moreSkill
 		gap: 15px;
 		flex-wrap: wrap;
 		padding: 60px 15px;
-		background-image: url('/images/guitar.jpg');
+		background-image: var(--guitarImage);
 		background-size: cover;
 		background-position: center 45%;
 	}

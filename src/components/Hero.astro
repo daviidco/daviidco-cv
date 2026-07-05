@@ -24,7 +24,7 @@ const heroJob = `A ${profile.profession}`;
 	<slot name="nav" />
 </header>
 
-<style define:vars={{ heroImage: `url(${profile.heroImage})` }}>
+<style define:vars={{ heroImage: `url(${import.meta.env.BASE_URL}${profile.heroImage})` }}>
 	.main-header {
 		height: 100vh;
 		min-height: 600px;
